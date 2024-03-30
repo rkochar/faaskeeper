@@ -1,6 +1,8 @@
 import json
 import logging
 from typing import Optional
+import time
+import resource
 
 from faaskeeper.stats import StorageStatistics
 from functions.aws.config import Config
@@ -45,6 +47,7 @@ def get_object(obj: dict):
 
 def handler(event: dict, context):
 
+    start_time_faaskeeper, end_time_faaskeeper = time.time(), None
     events = event["Records"]
     logging.info(f"Begin processing {len(events)} events")
     processed_events = 0
@@ -89,6 +92,7 @@ def handler(event: dict, context):
             continue
         else:
             processed_events += 1
+        end_time_faaskeeper = time.time()
 
         if (
             config.benchmarking
@@ -102,3 +106,4 @@ def handler(event: dict, context):
         f"Read: {StorageStatistics.instance().read_units}\t"
         f"Write: {StorageStatistics.instance().write_units}"
     )
+    print(f"execution_time: {end_time_faaskeeper - start_time_faaskeeper} and ram: {resource.getrusage(resource.RUSAGE_SELF).ru_maxrss}")

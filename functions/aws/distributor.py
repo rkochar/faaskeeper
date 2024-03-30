@@ -4,6 +4,7 @@ import time
 import hashlib
 from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Dict, List, Set
+import resource
 
 import boto3
 
@@ -83,6 +84,7 @@ timing_stats = TimingStatistics.instance()
 
 
 def handler(event: dict, context):
+    start_time_faaskeeper = time.time()
     events = event["Records"]
     logging.info(f"Begin processing {len(events)} events")
 
@@ -150,6 +152,7 @@ def handler(event: dict, context):
                         config.system_storage, config.user_storage, epoch_counters[r]
                     )
                 end_write = time.time()
+                end_time_faaskeeper = time.time()
                 timing_stats.add_result("write", end_write - begin_write)
 
                 if config.benchmarking:
@@ -229,3 +232,4 @@ def handler(event: dict, context):
         f"Read: {StorageStatistics.instance().read_units}\t"
         f"Write: {StorageStatistics.instance().write_units}"
     )
+    print(f"execution_time: {end_time_faaskeeper - start_time_faaskeeper} and ram: {resource.getrusage(resource.RUSAGE_SELF).ru_maxrss}")

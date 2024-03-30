@@ -4,6 +4,8 @@ import socket
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from typing import Dict
+import time
+import resource
 
 from boto3.dynamodb.types import TypeDeserializer
 
@@ -61,6 +63,7 @@ def notify(addr: str, session: str, s=None):
 def handler(event: dict, context: dict):
 
     start = datetime.now()
+    start_time_faaskeeper = time.time()
     if verbose:
         print(f"Begin heartbeat at {start}")
     data, read_capacity = users_table.get_users()
@@ -87,4 +90,5 @@ def handler(event: dict, context: dict):
 
         traceback.print_exc()
 
+    print(f"execution_time: {time.time() - start_time_faaskeeper} and ram: {resource.getrusage(resource.RUSAGE_SELF).ru_maxrss}")
     return {"cost": read_capacity, "active_clients": active_clients}

@@ -13,5 +13,10 @@
   "configuration": {
     "benchmarking": "True",
     "benchmarking-frequency": 1
-  }
+  },
+  "aws": {
+    "data-bucket": "faaskeeper-dev-data"
+  },
+  "service": "faaskeeper",
+  "stage": "dev"
 }

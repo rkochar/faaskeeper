@@ -63,6 +63,12 @@ The existing deployment can be cleared by removing entire service before redeplo
 ```
 ./fk.py deploy service --provider aws --clean --config config/user_config.json
 ```
+
+Clean up
+```
+./fk1.py deploy service ./config/user_config_final.json --provider aws --config ./config/user_config.json --destroy
+```
+
 ### GCP
 Use the JSON config example in `config/user_config_gcp.json` to change the deployment name and parameters.
 
